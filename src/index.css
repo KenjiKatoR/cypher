@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #05080d;
+    color: #e2f1ff;
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+.font-mono-cyber {
+  font-family: 'JetBrains Mono', 'Chakra Petch', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.scanlines {
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 243, 255, 0.03));
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+}
+
+.hud-border {
+  position: relative;
+  border: 1px solid #16283d;
+  background: rgba(9, 16, 26, 0.88);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.hud-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: #00f3ff;
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  opacity: 0.8;
+}
+
+.hud-border-glow {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.12), inset 0 0 15px rgba(0, 243, 255, 0.04);
+}
+
+.hud-button {
+  background: rgba(0, 243, 255, 0.06);
+  border: 1px solid rgba(0, 243, 255, 0.35);
+  color: #00f3ff;
+  transition: all 0.2s ease;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.hud-button:hover {
+  background: rgba(0, 243, 255, 0.18);
+  border-color: #00f3ff;
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.45);
+}
+
+.hud-button-active {
+  background: rgba(0, 243, 255, 0.25) !important;
+  border-color: #00f3ff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.6);
+}
+
+.hud-button-danger {
+  background: rgba(255, 0, 60, 0.08);
+  border: 1px solid rgba(255, 0, 60, 0.4);
+  color: #ff003c;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s ease;
+}
+
+.hud-button-danger:hover {
+  background: rgba(255, 0, 60, 0.2);
+  border-color: #ff003c;
+  box-shadow: 0 0 12px rgba(255, 0, 60, 0.45);
+}
+
+.hud-button-success {
+  background: rgba(0, 255, 102, 0.08);
+  border: 1px solid rgba(0, 255, 102, 0.4);
+  color: #00ff66;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s ease;
+}
+
+.hud-button-success:hover {
+  background: rgba(0, 255, 102, 0.2);
+  border-color: #00ff66;
+  box-shadow: 0 0 12px rgba(0, 255, 102, 0.45);
+}
+
+/* Custom Cyber Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #05080d;
+}
+::-webkit-scrollbar-thumb {
+  background: #16283d;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00f3ff66;
+}

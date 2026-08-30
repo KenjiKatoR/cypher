@@ -1,0 +1,7 @@
+{
+  "name": "C.Y.P.H.E.R. — Heroes Ranking",
+  "description": "Sistema oficial de monitoramento, avaliação balística e classificação mundial de super-humanos C.Y.P.H.E.R.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

@@ -21,9 +21,13 @@ export const Footer: React.FC<FooterProps> = ({
   return (
     <footer className="border-t border-[#16283d] bg-[#09101a]/70 py-4 mt-auto">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-xs font-mono-cyber text-[#7e9bb5] gap-3">
-        <div className="flex items-center space-x-2">
-          <ShieldCheck size={14} className="text-[#00f3ff]" />
-          <span>C.Y.P.H.E.R. CENTRAL INTELLIGENCE — ALL RIGHTS RESERVED</span>
+        <div className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2">
+          <div className="flex items-center space-x-2">
+            <ShieldCheck size={14} className="text-[#00f3ff]" />
+            <span className="font-bold text-[#e2f1ff]">C.Y.P.H.E.R.</span>
+          </div>
+          <span className="hidden sm:inline text-[#16283d]">•</span>
+          <span className="text-[10px] text-[#7e9bb5]">Cybernetic Yield Protocols and Heroic Enforcement Registry</span>
         </div>
 
         <div className="flex items-center space-x-4 flex-wrap justify-center">

@@ -25,6 +25,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
   availableHeroes,
 }) => {
   const [name, setName] = useState('');
+  const [abbreviation, setAbbreviation] = useState('');
   const [emblem, setEmblem] = useState('');
   const [scope, setScope] = useState('');
   const [rank, setRank] = useState('#1');
@@ -35,6 +36,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
   useEffect(() => {
     if (initialData) {
       setName(initialData.name || '');
+      setAbbreviation(initialData.abbreviation || '');
       setEmblem(initialData.emblem || '');
       setScope(initialData.scope || '');
       setRank(initialData.rank || '#1');
@@ -42,6 +44,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
       setSelectedMembers(initialData.members || []);
     } else {
       setName('');
+      setAbbreviation('');
       setEmblem('https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&q=80&w=400');
       setScope('');
       setRank('#1');
@@ -74,6 +77,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
     const teamToSave: Team = {
       id: initialData?.id || 't_' + Date.now(),
       name: name.trim().toUpperCase(),
+      abbreviation: abbreviation.trim().toUpperCase() || undefined,
       emblem: emblem.trim() || 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&q=80&w=400',
       scope: scope.trim() || 'Internacional / Global',
       rank: rank.trim() || '#1',
@@ -106,8 +110,8 @@ export const TeamModal: React.FC<TeamModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 font-mono-cyber text-xs">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="sm:col-span-2">
               <label className="block text-[#7e9bb5] mb-1 font-medium">Nome da Equipe *:</label>
               <input
                 type="text"
@@ -116,6 +120,18 @@ export const TeamModal: React.FC<TeamModalProps> = ({
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Ex: CYPHER"
                 className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none uppercase"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[#7e9bb5] mb-1 font-medium">Sigla / Abreviação (Opcional):</label>
+              <input
+                type="text"
+                maxLength={6}
+                value={abbreviation}
+                onChange={(e) => setAbbreviation(e.target.value.toUpperCase())}
+                placeholder="Ex: CYP"
+                className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none uppercase font-bold tracking-wider"
               />
             </div>
 

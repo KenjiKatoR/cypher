@@ -46,11 +46,11 @@ export const InicioView: React.FC<InicioViewProps> = ({
         <div className="relative z-10 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <div className="text-[#00f3ff] font-mono-cyber text-xs tracking-widest uppercase mb-1 flex items-center space-x-1.5">
-                <span className="w-2 h-2 bg-[#00f3ff] inline-block animate-pulse"></span>
-                <span>GLOBAL DEFENSE INITIATIVE // CYPHER PROTOCOL</span>
+              <div className="text-[#00f3ff] font-mono-cyber text-xs tracking-widest uppercase mb-1 flex items-center flex-wrap gap-1.5">
+                <span className="w-2 h-2 bg-[#00f3ff] inline-block animate-pulse shrink-0"></span>
+                <span className="font-semibold">CYBERNETIC YIELD PROTOCOLS AND HEROIC ENFORCEMENT REGISTRY</span>
                 {!isAdmin && (
-                  <span className="text-[10px] px-2 py-0.5 border border-[#7e9bb5]/40 text-[#7e9bb5] bg-[#05080d] rounded flex items-center gap-1 font-mono-cyber normal-case">
+                  <span className="text-[10px] px-2 py-0.5 border border-[#7e9bb5]/40 text-[#7e9bb5] bg-[#05080d] rounded flex items-center gap-1 font-mono-cyber normal-case shrink-0">
                     <Lock size={10} />
                     Modo Público (Leitura)
                   </span>
@@ -239,10 +239,10 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 onClick={() => onSelectHero(top3[1].id)}
                 className="hud-border p-4 relative flex flex-col items-center text-center hover:border-[#00f3ff] transition-all cursor-pointer group bg-[#09101a]"
               >
-                <div className="absolute top-2 left-2 font-mono-cyber font-bold text-xs text-[#00f3ff] bg-[#05080d] px-2 py-0.5 rounded border border-[#16283d]">
+                <div className="absolute top-2 left-2 font-mono-cyber font-bold text-xs text-[#00f3ff] bg-[#05080d] px-2 py-0.5 rounded border border-[#16283d] whitespace-nowrap shrink-0 inline-block">
                   {formatHeroRank(top3[1].rankLetter, top3[1].worldRank)}
                 </div>
-                <span className="absolute top-2 right-2 px-1.5 py-0.5 text-[10px] rounded font-mono-cyber bg-[#16283d] text-[#e2f1ff]">
+                <span className="absolute top-2 right-2 px-1.5 py-0.5 text-[10px] rounded font-mono-cyber bg-[#16283d] text-[#e2f1ff] whitespace-nowrap shrink-0">
                   RANK 2º
                 </span>
                 <div className="w-24 h-24 my-3 overflow-hidden border border-[#16283d] group-hover:border-[#00f3ff] transition-colors relative bg-[#05080d] rounded-xs">
@@ -261,10 +261,10 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 </h4>
                 <div className="text-xs text-[#7e9bb5] font-mono-cyber mb-2">{top3[1].civilianName}</div>
                 <div className="flex items-center space-x-2 text-xs font-mono-cyber">
-                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#00f3ff]">
+                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#00f3ff] whitespace-nowrap">
                     {top3[1].country}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#ffcc00]">
+                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#ffcc00] whitespace-nowrap">
                     AMEAÇA {top3[1].threatLevel}
                   </span>
                 </div>
@@ -276,8 +276,8 @@ export const InicioView: React.FC<InicioViewProps> = ({
                   isAdmin ? 'hover:text-[#00f3ff] hover:border-[#00f3ff] cursor-pointer' : ''
                 }`}
               >
-                <span className="font-mono-cyber text-sm">#S-002 — VAGO</span>
-                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1">+ Adicionar Herói Rank #2</p>}
+                <span className="font-mono-cyber text-sm whitespace-nowrap">#S-002 — VAGO</span>
+                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Adicionar Herói Rank #2</p>}
               </div>
             )}
 
@@ -287,11 +287,11 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 onClick={() => onSelectHero(top3[0].id)}
                 className="hud-border hud-border-glow border-[#00f3ff] bg-cyan-950/20 p-5 relative flex flex-col items-center text-center hover:scale-[1.02] transition-all cursor-pointer group md:-mt-3"
               >
-                <div className="absolute top-2 left-2 font-mono-cyber font-bold text-xs text-[#00f3ff] flex items-center space-x-1 bg-[#05080d] px-2 py-0.5 rounded border border-[#00f3ff]/40 shadow-[0_0_8px_rgba(0,243,255,0.25)]">
-                  <Trophy size={13} className="text-[#ffcc00]" />
-                  <span>{formatHeroRank(top3[0].rankLetter, top3[0].worldRank)}</span>
+                <div className="absolute top-2 left-2 font-mono-cyber font-bold text-xs text-[#00f3ff] flex items-center space-x-1 bg-[#05080d] px-2 py-0.5 rounded border border-[#00f3ff]/40 shadow-[0_0_8px_rgba(0,243,255,0.25)] whitespace-nowrap shrink-0 inline-block">
+                  <Trophy size={13} className="text-[#ffcc00] shrink-0" />
+                  <span className="whitespace-nowrap">{formatHeroRank(top3[0].rankLetter, top3[0].worldRank)}</span>
                 </div>
-                <span className="absolute top-2 right-2 px-2 py-0.5 text-[10px] rounded font-mono-cyber bg-[#00f3ff]/20 text-[#00f3ff] border border-[#00f3ff]/40 font-bold animate-pulse">
+                <span className="absolute top-2 right-2 px-2 py-0.5 text-[10px] rounded font-mono-cyber bg-[#00f3ff]/20 text-[#00f3ff] border border-[#00f3ff]/40 font-bold animate-pulse whitespace-nowrap shrink-0">
                   CAMPEÃO MUNDIAL
                 </span>
                 <div className="w-28 h-28 my-3 overflow-hidden border-2 border-[#00f3ff] shadow-[0_0_15px_rgba(0,243,255,0.4)] relative bg-[#05080d] rounded-xs">
@@ -310,10 +310,10 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 </h4>
                 <div className="text-xs text-[#7e9bb5] font-mono-cyber mb-2">{top3[0].civilianName}</div>
                 <div className="flex items-center space-x-2 text-xs font-mono-cyber">
-                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#00f3ff]/40 text-[#00f3ff] font-semibold">
+                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#00f3ff]/40 text-[#00f3ff] font-semibold whitespace-nowrap">
                     {top3[0].country}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#ff003c]/40 text-[#ff003c] font-semibold">
+                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#ff003c]/40 text-[#ff003c] font-semibold whitespace-nowrap">
                     AMEAÇA {top3[0].threatLevel}
                   </span>
                 </div>
@@ -326,8 +326,8 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 }`}
               >
                 <Trophy size={24} className="text-[#ffcc00] mb-1" />
-                <span className="font-mono-cyber font-bold text-sm">#S-001 — VAGO</span>
-                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1">+ Cadastrar Herói Líder (#01)</p>}
+                <span className="font-mono-cyber font-bold text-sm whitespace-nowrap">#S-001 — VAGO</span>
+                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Cadastrar Herói Líder (#01)</p>}
               </div>
             )}
 
@@ -337,10 +337,10 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 onClick={() => onSelectHero(top3[2].id)}
                 className="hud-border p-4 relative flex flex-col items-center text-center hover:border-[#00f3ff] transition-all cursor-pointer group bg-[#09101a]"
               >
-                <div className="absolute top-2 left-2 font-mono-cyber font-bold text-xs text-[#00f3ff] bg-[#05080d] px-2 py-0.5 rounded border border-[#16283d]">
+                <div className="absolute top-2 left-2 font-mono-cyber font-bold text-xs text-[#00f3ff] bg-[#05080d] px-2 py-0.5 rounded border border-[#16283d] whitespace-nowrap shrink-0 inline-block">
                   {formatHeroRank(top3[2].rankLetter, top3[2].worldRank)}
                 </div>
-                <span className="absolute top-2 right-2 px-1.5 py-0.5 text-[10px] rounded font-mono-cyber bg-[#16283d] text-[#e2f1ff]">
+                <span className="absolute top-2 right-2 px-1.5 py-0.5 text-[10px] rounded font-mono-cyber bg-[#16283d] text-[#e2f1ff] whitespace-nowrap shrink-0">
                   RANK 3º
                 </span>
                 <div className="w-24 h-24 my-3 overflow-hidden border border-[#16283d] group-hover:border-[#00f3ff] transition-colors relative bg-[#05080d] rounded-xs">
@@ -359,10 +359,10 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 </h4>
                 <div className="text-xs text-[#7e9bb5] font-mono-cyber mb-2">{top3[2].civilianName}</div>
                 <div className="flex items-center space-x-2 text-xs font-mono-cyber">
-                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#00f3ff]">
+                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#00f3ff] whitespace-nowrap">
                     {top3[2].country}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#ffcc00]">
+                  <span className="px-2 py-0.5 rounded bg-[#05080d] border border-[#16283d] text-[#ffcc00] whitespace-nowrap">
                     AMEAÇA {top3[2].threatLevel}
                   </span>
                 </div>
@@ -374,8 +374,8 @@ export const InicioView: React.FC<InicioViewProps> = ({
                   isAdmin ? 'hover:text-[#00f3ff] hover:border-[#00f3ff] cursor-pointer' : ''
                 }`}
               >
-                <span className="font-mono-cyber text-sm">#S-003 — VAGO</span>
-                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1">+ Adicionar Herói Rank #3</p>}
+                <span className="font-mono-cyber text-sm whitespace-nowrap">#S-003 — VAGO</span>
+                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Adicionar Herói Rank #3</p>}
               </div>
             )}
           </div>
@@ -407,10 +407,10 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 className="hud-border p-3 flex items-center justify-between hover:border-[#00f3ff] transition-colors cursor-pointer group bg-[#09101a]"
               >
                 <div className="flex items-center space-x-3">
-                  <span className="font-mono-cyber font-bold text-[#00f3ff] text-xs px-2 py-0.5 bg-[#05080d] border border-[#00f3ff]/30 rounded">
+                  <span className="font-mono-cyber font-bold text-[#00f3ff] text-xs px-2 py-0.5 bg-[#05080d] border border-[#00f3ff]/30 rounded whitespace-nowrap shrink-0 inline-block">
                     {formatHeroRank(h.rankLetter, h.worldRank)}
                   </span>
-                  <div className="w-10 h-10 border border-[#16283d] overflow-hidden group-hover:border-[#00f3ff] transition-colors rounded-xs">
+                  <div className="w-10 h-10 border border-[#16283d] overflow-hidden group-hover:border-[#00f3ff] transition-colors rounded-xs shrink-0">
                     <img
                       src={h.portrait}
                       alt={h.codename}
@@ -421,18 +421,18 @@ export const InicioView: React.FC<InicioViewProps> = ({
                       }}
                     />
                   </div>
-                  <div>
-                    <div className="font-mono-cyber font-bold text-[#e2f1ff] text-sm group-hover:text-[#00f3ff]">
+                  <div className="min-w-0">
+                    <div className="font-mono-cyber font-bold text-[#e2f1ff] text-sm group-hover:text-[#00f3ff] truncate">
                       {h.codename}
                     </div>
-                    <div className="text-[10px] text-[#7e9bb5] font-mono-cyber">
+                    <div className="text-[10px] text-[#7e9bb5] font-mono-cyber truncate">
                       {h.team} | {h.country}
                     </div>
                   </div>
                 </div>
-                <div className="text-right font-mono-cyber">
-                  <div className="text-xs text-[#00f3ff] font-semibold">POS #{h.worldRank}</div>
-                  <div className="text-[10px] text-[#ffcc00]">AMEAÇA: {h.threatLevel}</div>
+                <div className="text-right font-mono-cyber shrink-0 pl-2">
+                  <div className="text-xs text-[#00f3ff] font-semibold whitespace-nowrap">POS #{h.worldRank}</div>
+                  <div className="text-[10px] text-[#ffcc00] whitespace-nowrap">AMEAÇA: {h.threatLevel}</div>
                 </div>
               </div>
             ))}

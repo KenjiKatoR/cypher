@@ -148,10 +148,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             />
 
             {/* Badges Over Image with Rank Letter (e.g. #S-001) */}
-            <div className="absolute top-2 left-2 bg-[#05080d]/90 border border-[#00f3ff] px-2.5 py-1 font-mono-cyber text-xs text-[#00f3ff] font-bold shadow-[0_0_8px_rgba(0,243,255,0.3)]">
+            <div className="absolute top-2 left-2 bg-[#05080d]/90 border border-[#00f3ff] px-2.5 py-1 font-mono-cyber text-xs text-[#00f3ff] font-bold shadow-[0_0_8px_rgba(0,243,255,0.3)] whitespace-nowrap shrink-0 inline-block">
               {formatHeroRank(hero.rankLetter, hero.worldRank)}
             </div>
-            <div className={`absolute top-2 right-2 px-2.5 py-1 font-mono-cyber text-xs border rounded-xs shadow font-bold ${threatStyle.bg} ${threatStyle.border} ${threatStyle.text} ${threatStyle.glow}`}>
+            <div className={`absolute top-2 right-2 px-2.5 py-1 font-mono-cyber text-xs border rounded-xs shadow font-bold whitespace-nowrap shrink-0 ${threatStyle.bg} ${threatStyle.border} ${threatStyle.text} ${threatStyle.glow}`}>
               AMEAÇA {hero.threatLevel}
             </div>
 

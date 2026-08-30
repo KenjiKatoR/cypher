@@ -73,12 +73,12 @@ export const Header: React.FC<HeaderProps> = ({
                 <h1 className="font-mono-cyber font-bold tracking-widest text-[#e2f1ff] text-lg">
                   C.Y.P.H.E.R.
                 </h1>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950/80 text-[#00f3ff] border border-[#00f3ff]/40 font-mono-cyber tracking-wider">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950/80 text-[#00f3ff] border border-[#00f3ff]/40 font-mono-cyber tracking-wider shrink-0">
                   SERVER-SYNC
                 </span>
               </div>
-              <p className="text-[10px] text-[#7e9bb5] tracking-wider font-mono-cyber">
-                HEROES RANKING SYSTEM v4.82 (GLOBAL LIVE)
+              <p className="text-[9px] sm:text-[10px] text-[#00f3ff]/80 tracking-wider font-mono-cyber uppercase font-semibold">
+                Cybernetic Yield Protocols and Heroic Enforcement Registry
               </p>
             </div>
           </div>

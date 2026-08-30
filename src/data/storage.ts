@@ -86,15 +86,15 @@ export const sampleDatasetHeroes: Hero[] = [
 ];
 
 export const sampleDatasetTeams: Team[] = [
-  { id: 't1', name: 'CYPHER', emblem: 'Ω', scope: 'Internacional / Global', rank: '#1', desc: 'Força de elite oficial subordinada diretamente ao Alto Conselho.', members: ['TITAN'] },
-  { id: 't2', name: 'CINTILLA', emblem: '✦', scope: 'América do Sul / Global', rank: '#2', desc: 'Divisão especializada em fenômenos místicos e bioenergéticos.', members: ['ARCANA'] },
-  { id: 't3', name: 'MAXWAVES', emblem: '⚡', scope: 'Ásia / Pacífico', rank: '#3', desc: 'Especialistas em alta tecnologia móvel e operações supersônicas.', members: ['SOLAR FLARE'] }
+  { id: 't1', name: 'CYPHER', abbreviation: 'CYP', emblem: 'Ω', scope: 'Internacional / Global', rank: '#1', desc: 'Força de elite oficial subordinada diretamente ao Alto Conselho.', members: ['TITAN'] },
+  { id: 't2', name: 'CINTILLA', abbreviation: 'CNT', emblem: '✦', scope: 'América do Sul / Global', rank: '#2', desc: 'Divisão especializada em fenômenos místicos e bioenergéticos.', members: ['ARCANA'] },
+  { id: 't3', name: 'MAXWAVES', abbreviation: 'MXW', emblem: '⚡', scope: 'Ásia / Pacífico', rank: '#3', desc: 'Especialistas em alta tecnologia móvel e operações supersônicas.', members: ['SOLAR FLARE'] }
 ];
 
 export const sampleDatasetCountries: Country[] = [
-  { id: 'c1', name: 'Brasil', flag: '🇧🇷', rank: '1º Nacional' },
-  { id: 'c2', name: 'Estados Unidos', flag: '🇺🇸', rank: '2º Nacional' },
-  { id: 'c3', name: 'Japão', flag: '🇯🇵', rank: '3º Nacional' }
+  { id: 'c1', name: 'Brasil', code: 'BRA', flag: '🇧🇷', rank: '1º Nacional' },
+  { id: 'c2', name: 'Estados Unidos', code: 'USA', flag: '🇺🇸', rank: '2º Nacional' },
+  { id: 'c3', name: 'Japão', code: 'JPN', flag: '🇯🇵', rank: '3º Nacional' }
 ];
 
 export const sampleDatasetChanges: RankingChange[] = [

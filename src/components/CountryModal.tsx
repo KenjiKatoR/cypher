@@ -10,11 +10,11 @@ interface CountryModalProps {
 }
 
 const SAMPLE_COUNTRY_FLAGS = [
-  { name: 'Brasil', url: 'https://images.unsplash.com/photo-1594911772125-07fc7a2d8d9f?auto=format&fit=crop&q=80&w=400' },
-  { name: 'Estados Unidos', url: 'https://images.unsplash.com/photo-1508433957232-3107f5fd5995?auto=format&fit=crop&q=80&w=400' },
-  { name: 'Japão', url: 'https://images.unsplash.com/photo-1528164344705-475426879c0d?auto=format&fit=crop&q=80&w=400' },
-  { name: 'Reino Unido', url: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=400' },
-  { name: 'União Europeia', url: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=400' },
+  { name: 'Brasil', code: 'BRA', url: 'https://images.unsplash.com/photo-1594911772125-07fc7a2d8d9f?auto=format&fit=crop&q=80&w=400' },
+  { name: 'Estados Unidos', code: 'USA', url: 'https://images.unsplash.com/photo-1508433957232-3107f5fd5995?auto=format&fit=crop&q=80&w=400' },
+  { name: 'Japão', code: 'JPN', url: 'https://images.unsplash.com/photo-1528164344705-475426879c0d?auto=format&fit=crop&q=80&w=400' },
+  { name: 'Reino Unido', code: 'GBR', url: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=400' },
+  { name: 'União Europeia', code: 'EUR', url: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=400' },
 ];
 
 export const CountryModal: React.FC<CountryModalProps> = ({
@@ -24,16 +24,19 @@ export const CountryModal: React.FC<CountryModalProps> = ({
   initialData,
 }) => {
   const [name, setName] = useState('');
+  const [code, setCode] = useState('');
   const [flag, setFlag] = useState('');
   const [rank, setRank] = useState('1º Nacional');
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name || '');
+      setCode(initialData.code || '');
       setFlag(initialData.flag || '');
       setRank(initialData.rank || '1º Nacional');
     } else {
       setName('');
+      setCode('');
       setFlag('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=400');
       setRank('1º Nacional');
     }
@@ -48,6 +51,7 @@ export const CountryModal: React.FC<CountryModalProps> = ({
     const countryToSave: Country = {
       id: initialData?.id || 'c_' + Date.now(),
       name: name.trim(),
+      code: code.trim().toUpperCase() || undefined,
       flag: flag.trim() || 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=400',
       rank: rank.trim() || 'Jurisdição Registrada',
     };
@@ -76,16 +80,31 @@ export const CountryModal: React.FC<CountryModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 font-mono-cyber text-xs">
-          <div>
-            <label className="block text-[#7e9bb5] mb-1 font-medium">Nome do País *:</label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ex: Brasil, Japão, Estados Unidos..."
-              className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2">
+              <label className="block text-[#7e9bb5] mb-1 font-medium">Nome do País *:</label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ex: Brasil, Japão, Estados Unidos..."
+                className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[#7e9bb5] mb-1 font-medium">Abreviação / Sigla *:</label>
+              <input
+                type="text"
+                required
+                maxLength={5}
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                placeholder="Ex: BRA"
+                className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none uppercase font-bold tracking-wider"
+              />
+            </div>
           </div>
 
           {/* Square Image 1:1 Section */}

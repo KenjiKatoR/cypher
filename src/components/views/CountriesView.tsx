@@ -108,7 +108,14 @@ export const CountriesView: React.FC<CountriesViewProps> = ({
                         <span className="text-3xl">{c.flag || '🌐'}</span>
                       )}
                       <div>
-                        <h3 className="font-mono-cyber font-bold text-[#e2f1ff] text-lg">{c.name}</h3>
+                        <div className="flex items-center space-x-2 flex-wrap">
+                          <h3 className="font-mono-cyber font-bold text-[#e2f1ff] text-lg">{c.name}</h3>
+                          {c.code && (
+                            <span className="text-[10px] font-mono-cyber px-1.5 py-0.5 bg-[#05080d] border border-[#00f3ff]/40 text-[#00f3ff] rounded font-bold">
+                              {c.code}
+                            </span>
+                          )}
+                        </div>
                         <span className="text-[11px] font-mono-cyber text-[#00f3ff] font-semibold">
                           {c.rank || 'Membro'}
                         </span>

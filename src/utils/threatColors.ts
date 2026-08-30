@@ -182,9 +182,10 @@ export function compareHeroesHierarchical(a: { rankLetter?: string; worldRank?: 
 
 /**
  * Formats hero rank position with hierarchical rank letter, e.g. #S-001, #A-004, #B-015
+ * Uses non-breaking hyphen (\u2011) to prevent wrapping across resolution changes
  */
 export function formatHeroRank(rankLetter: string | undefined | null, worldRank: number | undefined | null): string {
   const letter = (rankLetter || 'S').trim().toUpperCase();
   const num = worldRank !== undefined && worldRank !== null && !isNaN(worldRank) ? worldRank : 1;
-  return `#${letter}-${String(num).padStart(3, '0')}`;
+  return `#${letter}\u2011${String(num).padStart(3, '0')}`;
 }

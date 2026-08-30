@@ -111,7 +111,14 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                       </div>
                     )}
                     <div>
-                      <h3 className="font-mono-cyber font-bold text-[#e2f1ff] text-lg">{t.name}</h3>
+                      <div className="flex items-center space-x-2 flex-wrap">
+                        <h3 className="font-mono-cyber font-bold text-[#e2f1ff] text-lg">{t.name}</h3>
+                        {t.abbreviation && (
+                          <span className="text-[10px] font-mono-cyber px-1.5 py-0.5 bg-[#05080d] border border-[#00f3ff]/40 text-[#00f3ff] rounded font-bold">
+                            {t.abbreviation}
+                          </span>
+                        )}
+                      </div>
                       <div className="text-xs text-[#7e9bb5] font-mono-cyber">{t.scope}</div>
                     </div>
                   </div>

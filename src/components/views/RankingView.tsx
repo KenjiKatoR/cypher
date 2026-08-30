@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Hero } from '../../types';
 import { Search, Filter, ArrowUpDown, Plus, Eye, Edit2, Trash2, ShieldAlert, Lock, User, Sparkles } from 'lucide-react';
 import { getPowerTypeStyle } from '../../utils/powerColors';
@@ -27,6 +27,12 @@ export const RankingView: React.FC<RankingViewProps> = ({
   const [rankLetterFilter, setRankLetterFilter] = useState('');
   const [threatFilter, setThreatFilter] = useState('');
   const [sortBy, setSortBy] = useState<'hierarchical' | 'popularity' | 'followers'>('hierarchical');
+
+  useEffect(() => {
+    if (initialSearchQuery !== undefined) {
+      setSearch(initialSearchQuery);
+    }
+  }, [initialSearchQuery]);
 
   const filteredHeroes = heroes.filter((h) => {
     const q = search.toLowerCase();
@@ -180,10 +186,10 @@ export const RankingView: React.FC<RankingViewProps> = ({
                   className="hover:bg-[#00f3ff]/5 transition-colors border-b border-[#16283d]/30"
                 >
                   {/* Position Badge with Rank Letter (e.g. #S-001) */}
-                  <td className="p-3 font-bold text-sm text-[#00f3ff]">
-                    <div className="flex items-center space-x-2">
+                  <td className="p-3 font-bold text-sm text-[#00f3ff] whitespace-nowrap shrink-0">
+                    <div className="flex items-center space-x-2 whitespace-nowrap shrink-0">
                       <span
-                        className={`inline-block px-2.5 py-1 rounded font-mono-cyber ${
+                        className={`inline-block px-2.5 py-1 rounded font-mono-cyber whitespace-nowrap shrink-0 ${
                           displayPosition === 1
                             ? 'bg-[#ffcc00]/20 text-[#ffcc00] border border-[#ffcc00] shadow-[0_0_8px_rgba(255,204,0,0.25)]'
                             : displayPosition === 2
@@ -195,7 +201,7 @@ export const RankingView: React.FC<RankingViewProps> = ({
                       >
                         {formatHeroRank(h.rankLetter, h.worldRank)}
                       </span>
-                      <span className="text-[10px] text-[#7e9bb5] font-mono-cyber">
+                      <span className="text-[10px] text-[#7e9bb5] font-mono-cyber whitespace-nowrap shrink-0">
                         #{displayPosition}
                       </span>
                     </div>

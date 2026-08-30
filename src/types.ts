@@ -44,6 +44,7 @@ export interface Hero {
 export interface Team {
   id: string;
   name: string;
+  abbreviation?: string; // Optional team acronym / abbreviation (e.g. CYP, CNT, MXW)
   emblem: string;
   scope: string;
   count?: number;
@@ -55,6 +56,7 @@ export interface Team {
 export interface Country {
   id: string;
   name: string;
+  code?: string; // Country abbreviation / ISO code (e.g. BRA, USA, JPN)
   flag: string;
   heroesCount?: number;
   activeCount?: number;

@@ -270,16 +270,16 @@ export const HeroesView: React.FC<HeroesViewProps> = ({
                 <div>
                   {/* Card Top Strip with Position and Rank together: e.g. #S-001 */}
                   <div className="flex justify-between items-center mb-3">
-                    <div className="flex items-center space-x-1.5">
-                      <span className="font-mono-cyber font-bold text-xs text-[#00f3ff] px-2 py-0.5 bg-[#05080d] border border-[#00f3ff]/40 rounded shadow-[0_0_8px_rgba(0,243,255,0.2)]">
+                    <div className="flex items-center space-x-1.5 whitespace-nowrap shrink-0">
+                      <span className="font-mono-cyber font-bold text-xs text-[#00f3ff] px-2 py-0.5 bg-[#05080d] border border-[#00f3ff]/40 rounded shadow-[0_0_8px_rgba(0,243,255,0.2)] whitespace-nowrap shrink-0 inline-block">
                         {rankCode}
                       </span>
-                      <span className="text-[10px] font-mono-cyber px-1.5 py-0.5 bg-[#05080d] border border-[#16283d] text-[#7e9bb5] rounded">
+                      <span className="text-[10px] font-mono-cyber px-1.5 py-0.5 bg-[#05080d] border border-[#16283d] text-[#7e9bb5] rounded whitespace-nowrap shrink-0">
                         POS #{h.worldRank}
                       </span>
                     </div>
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded font-bold border ${threatStyle.badgeClass}`}
+                      className={`text-[10px] px-2 py-0.5 rounded font-bold border whitespace-nowrap shrink-0 ${threatStyle.badgeClass}`}
                     >
                       {h.threatLevel}
                     </span>

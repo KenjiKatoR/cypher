@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Hero } from '../../types';
-import { Search, Filter, ArrowUpDown, Plus, Eye, Edit2, Trash2, ShieldAlert, Lock, User, Sparkles } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, Plus, Eye, Edit2, Trash2, ShieldAlert, Lock, User, Sparkles, RotateCcw } from 'lucide-react';
 import { getPowerTypeStyle } from '../../utils/powerColors';
 import { getThreatLevelStyle, formatFollowers, formatHeroRank, compareHeroesHierarchical } from '../../utils/threatColors';
 
@@ -33,6 +33,15 @@ export const RankingView: React.FC<RankingViewProps> = ({
       setSearch(initialSearchQuery);
     }
   }, [initialSearchQuery]);
+
+  const hasActiveFilters = Boolean(search || rankLetterFilter || threatFilter || sortBy !== 'hierarchical');
+
+  const handleClearFilters = () => {
+    setSearch('');
+    setRankLetterFilter('');
+    setThreatFilter('');
+    setSortBy('hierarchical');
+  };
 
   const filteredHeroes = heroes.filter((h) => {
     const q = search.toLowerCase();
@@ -146,6 +155,18 @@ export const RankingView: React.FC<RankingViewProps> = ({
             <option value="popularity">Ordenar: Popularidade</option>
             <option value="followers">Ordenar: Seguidores</option>
           </select>
+
+          {hasActiveFilters && (
+            <button
+              id="rankingClearFiltersBtn"
+              onClick={handleClearFilters}
+              className="text-xs font-mono-cyber text-[#ffcc00] hover:text-[#00f3ff] flex items-center gap-1 cursor-pointer transition-colors bg-[#05080d] px-2.5 py-1.5 rounded border border-[#16283d] hover:border-[#ffcc00]/50 shrink-0 shadow-sm"
+              title="Limpar todos os filtros e busca"
+            >
+              <RotateCcw size={12} />
+              <span>Limpar Filtros</span>
+            </button>
+          )}
 
           {isAdmin && (
             <button

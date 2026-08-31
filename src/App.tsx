@@ -667,6 +667,7 @@ export default function App() {
       <Header
         currentView={currentView}
         onSelectView={(view) => {
+          setRankingSearchQuery('');
           setCurrentView(view);
           if (view !== 'profile') setSelectedHeroId(null);
         }}
@@ -688,7 +689,10 @@ export default function App() {
             countries={countries}
             teams={teams}
             onSelectHero={handleSelectHero}
-            onNavigate={(view) => setCurrentView(view)}
+            onNavigate={(view) => {
+              setRankingSearchQuery('');
+              setCurrentView(view);
+            }}
             onOpenNewHero={handleOpenNewHero}
             onOpenNewTeam={handleOpenNewTeam}
             onOpenNewCountry={handleOpenNewCountry}
@@ -700,6 +704,7 @@ export default function App() {
 
         {currentView === 'ranking' && (
           <RankingView
+            key={`ranking-${rankingSearchQuery || 'default'}`}
             heroes={heroes}
             onSelectHero={handleSelectHero}
             onEditHero={handleEditHero}
@@ -712,6 +717,7 @@ export default function App() {
 
         {currentView === 'heroes' && (
           <HeroesView
+            key="heroes-view"
             heroes={heroes}
             onSelectHero={handleSelectHero}
             onEditHero={handleEditHero}

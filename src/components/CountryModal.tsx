@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Country } from '../types';
-import { X, Globe, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { X, Globe, Image as ImageIcon, Sparkles, Upload } from 'lucide-react';
 
 interface CountryModalProps {
   isOpen: boolean;
@@ -27,6 +27,25 @@ export const CountryModal: React.FC<CountryModalProps> = ({
   const [code, setCode] = useState('');
   const [flag, setFlag] = useState('');
   const [rank, setRank] = useState('1º Nacional');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('A imagem deve ter menos de 5MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setFlag(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -109,12 +128,40 @@ export const CountryModal: React.FC<CountryModalProps> = ({
 
           {/* Square Image 1:1 Section */}
           <div className="space-y-2 hud-border p-3.5 bg-[#05080d]/60 rounded">
-            <label className="block text-[#00f3ff] font-medium flex items-center space-x-1.5">
-              <ImageIcon size={14} className="text-[#00f3ff]" />
-              <span>BANDEIRA / BRASÃO NACIONAL (IMAGEM QUADRADA 1:1) *:</span>
-            </label>
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <label className="block text-[#00f3ff] font-medium flex items-center space-x-1.5">
+                <ImageIcon size={14} className="text-[#00f3ff]" />
+                <span>BANDEIRA / BRASÃO NACIONAL (IMAGEM QUADRADA 1:1) *:</span>
+              </label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-2.5 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] text-[10px] rounded hover:bg-[#00f3ff]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,243,255,0.2)]"
+                >
+                  <Upload size={11} />
+                  <span>ENVIAR ARQUIVO</span>
+                </button>
+                {flag && (
+                  <button
+                    type="button"
+                    onClick={() => setFlag('')}
+                    className="px-2 py-1 bg-[#05080d] border border-[#ff003c]/40 text-[#ff003c] text-[10px] rounded hover:bg-[#ff003c]/20 cursor-pointer"
+                  >
+                    LIMPAR
+                  </button>
+                )}
+              </div>
+            </div>
             <p className="text-[11px] text-[#7e9bb5]">
-              Insira a URL de uma imagem na proporção quadrada (1:1) representando a bandeira ou brasão da jurisdição.
+              Insira a URL de uma imagem na proporção quadrada (1:1), envie um arquivo local ou escolha um exemplo rápido.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 items-center pt-1">
@@ -124,6 +171,7 @@ export const CountryModal: React.FC<CountryModalProps> = ({
                   <img
                     src={flag}
                     alt="Preview da bandeira"
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src =
@@ -148,7 +196,7 @@ export const CountryModal: React.FC<CountryModalProps> = ({
                   required
                   value={flag}
                   onChange={(e) => setFlag(e.target.value)}
-                  placeholder="https://exemplo.com/bandeira-quadrada.jpg"
+                  placeholder="https://exemplo.com/bandeira-quadrada.jpg ou envie um arquivo"
                   className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none"
                 />
                 

@@ -70,92 +70,58 @@ export const InicioView: React.FC<InicioViewProps> = ({
           </div>
           <p className="text-[#7e9bb5] text-sm max-w-3xl leading-relaxed font-sans">
             Sistema oficial de monitoramento, avaliação balística e classificação mundial de super-humanos.
-            Estrutura centralizada para registro, indexação balística e dossiês de inteligência.
+            Estrutura centralizada para registro e dossiês de inteligência.
           </p>
 
-          {/* Quick Registration Bar */}
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            {isAdmin ? (
-               <>
+          {/* Quick Registration Bar (Admin Only) */}
+          {isAdmin && (
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                id="hero-banner-add-btn"
+                onClick={onOpenNewHero}
+                className="hud-button px-4 py-2 text-xs font-mono-cyber flex items-center space-x-2 hud-button-active shadow-[0_0_12px_rgba(0,243,255,0.3)] cursor-pointer"
+              >
+                <Plus size={14} />
+                <span>CADASTRAR NOVO HERÓI</span>
+              </button>
+              <button
+                onClick={onOpenNewTeam}
+                className="hud-button px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 cursor-pointer"
+              >
+                <Users size={14} />
+                <span>REGISTRAR EQUIPE</span>
+              </button>
+              <button
+                onClick={onOpenNewCountry}
+                className="hud-button px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 cursor-pointer"
+              >
+                <Globe size={14} />
+                <span>REGISTRAR PAÍS</span>
+              </button>
+              {onExportData && (
                 <button
-                  id="hero-banner-add-btn"
-                  onClick={onOpenNewHero}
-                  className="hud-button px-4 py-2 text-xs font-mono-cyber flex items-center space-x-2 hud-button-active shadow-[0_0_12px_rgba(0,243,255,0.3)] cursor-pointer"
+                  id="banner-export-btn"
+                  onClick={onExportData}
+                  className="px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 border border-[#00ff66]/50 bg-[#00ff66]/10 text-[#00ff66] hover:bg-[#00ff66]/20 transition-all rounded cursor-pointer shadow-[0_0_10px_rgba(0,255,102,0.2)]"
+                  title="Exportar todos os dados em arquivo JSON"
                 >
-                  <Plus size={14} />
-                  <span>CADASTRAR NOVO HERÓI</span>
+                  <Download size={14} />
+                  <span>EXPORTAR DADOS (JSON)</span>
                 </button>
+              )}
+              {onImportData && (
                 <button
-                  onClick={onOpenNewTeam}
-                  className="hud-button px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 cursor-pointer"
+                  id="banner-import-btn"
+                  onClick={onImportData}
+                  className="px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 border border-[#ffcc00]/50 bg-[#ffcc00]/10 text-[#ffcc00] hover:bg-[#ffcc00]/20 transition-all rounded cursor-pointer shadow-[0_0_10px_rgba(255,204,0,0.2)]"
+                  title="Importar dados de arquivo JSON"
                 >
-                  <Users size={14} />
-                  <span>REGISTRAR EQUIPE</span>
+                  <Upload size={14} />
+                  <span>IMPORTAR DADOS (JSON)</span>
                 </button>
-                <button
-                  onClick={onOpenNewCountry}
-                  className="hud-button px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 cursor-pointer"
-                >
-                  <Globe size={14} />
-                  <span>REGISTRAR PAÍS</span>
-                </button>
-                {onExportData && (
-                  <button
-                    id="banner-export-btn"
-                    onClick={onExportData}
-                    className="px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 border border-[#00ff66]/50 bg-[#00ff66]/10 text-[#00ff66] hover:bg-[#00ff66]/20 transition-all rounded cursor-pointer shadow-[0_0_10px_rgba(0,255,102,0.2)]"
-                    title="Exportar todos os dados em arquivo JSON"
-                  >
-                    <Download size={14} />
-                    <span>EXPORTAR DADOS (JSON)</span>
-                  </button>
-                )}
-                {onImportData && (
-                  <button
-                    id="banner-import-btn"
-                    onClick={onImportData}
-                    className="px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 border border-[#ffcc00]/50 bg-[#ffcc00]/10 text-[#ffcc00] hover:bg-[#ffcc00]/20 transition-all rounded cursor-pointer shadow-[0_0_10px_rgba(255,204,0,0.2)]"
-                    title="Importar dados de arquivo JSON"
-                  >
-                    <Upload size={14} />
-                    <span>IMPORTAR DADOS (JSON)</span>
-                  </button>
-                )}
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => onNavigate('ranking')}
-                  className="hud-button hud-button-active px-4 py-2 text-xs font-mono-cyber flex items-center space-x-2 cursor-pointer shadow-[0_0_12px_rgba(0,243,255,0.25)]"
-                >
-                  <Trophy size={14} />
-                  <span>CONSULTAR RANKING MUNDIAL</span>
-                </button>
-                <button
-                  onClick={() => onNavigate('heroes')}
-                  className="hud-button px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 cursor-pointer"
-                >
-                  <BookOpen size={14} />
-                  <span>CATÁLOGO DE HERÓIS</span>
-                </button>
-                <button
-                  onClick={() => onNavigate('teams')}
-                  className="hud-button px-3.5 py-2 text-xs font-mono-cyber flex items-center space-x-1.5 cursor-pointer"
-                >
-                  <Users size={14} />
-                  <span>EQUIPES TÁTICAS</span>
-                </button>
-              </>
-            )}
-
-            <button
-              onClick={() => onNavigate('ranking')}
-              className="px-3.5 py-2 text-xs font-mono-cyber text-[#7e9bb5] hover:text-[#00f3ff] flex items-center space-x-1 cursor-pointer transition-colors"
-            >
-              <span>Acessar Tabela Completa</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -247,8 +213,9 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 </span>
                 <div className="w-24 h-24 my-3 overflow-hidden border border-[#16283d] group-hover:border-[#00f3ff] transition-colors relative bg-[#05080d] rounded-xs">
                   <img
-                    src={top3[1].portrait}
+                    src={top3[1].squarePortrait || top3[1].portrait}
                     alt={top3[1].codename}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src =
@@ -276,8 +243,8 @@ export const InicioView: React.FC<InicioViewProps> = ({
                   isAdmin ? 'hover:text-[#00f3ff] hover:border-[#00f3ff] cursor-pointer' : ''
                 }`}
               >
-                <span className="font-mono-cyber text-sm whitespace-nowrap">#S-002 — VAGO</span>
-                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Adicionar Herói Rank #2</p>}
+                <span className="font-mono-cyber text-sm whitespace-nowrap">S-002 — VAGO</span>
+                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Adicionar Herói Rank 2</p>}
               </div>
             )}
 
@@ -296,8 +263,9 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 </span>
                 <div className="w-28 h-28 my-3 overflow-hidden border-2 border-[#00f3ff] shadow-[0_0_15px_rgba(0,243,255,0.4)] relative bg-[#05080d] rounded-xs">
                   <img
-                    src={top3[0].portrait}
+                    src={top3[0].squarePortrait || top3[0].portrait}
                     alt={top3[0].codename}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src =
@@ -326,8 +294,8 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 }`}
               >
                 <Trophy size={24} className="text-[#ffcc00] mb-1" />
-                <span className="font-mono-cyber font-bold text-sm whitespace-nowrap">#S-001 — VAGO</span>
-                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Cadastrar Herói Líder (#01)</p>}
+                <span className="font-mono-cyber font-bold text-sm whitespace-nowrap">S-001 — VAGO</span>
+                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Cadastrar Herói Líder (01)</p>}
               </div>
             )}
 
@@ -345,8 +313,9 @@ export const InicioView: React.FC<InicioViewProps> = ({
                 </span>
                 <div className="w-24 h-24 my-3 overflow-hidden border border-[#16283d] group-hover:border-[#00f3ff] transition-colors relative bg-[#05080d] rounded-xs">
                   <img
-                    src={top3[2].portrait}
+                    src={top3[2].squarePortrait || top3[2].portrait}
                     alt={top3[2].codename}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src =
@@ -374,8 +343,8 @@ export const InicioView: React.FC<InicioViewProps> = ({
                   isAdmin ? 'hover:text-[#00f3ff] hover:border-[#00f3ff] cursor-pointer' : ''
                 }`}
               >
-                <span className="font-mono-cyber text-sm whitespace-nowrap">#S-003 — VAGO</span>
-                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Adicionar Herói Rank #3</p>}
+                <span className="font-mono-cyber text-sm whitespace-nowrap">S-003 — VAGO</span>
+                {isAdmin && <p className="text-[11px] font-mono-cyber mt-1 whitespace-nowrap">+ Adicionar Herói Rank 3</p>}
               </div>
             )}
           </div>
@@ -412,8 +381,9 @@ export const InicioView: React.FC<InicioViewProps> = ({
                   </span>
                   <div className="w-10 h-10 border border-[#16283d] overflow-hidden group-hover:border-[#00f3ff] transition-colors rounded-xs shrink-0">
                     <img
-                      src={h.portrait}
+                      src={h.squarePortrait || h.portrait}
                       alt={h.codename}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src =
@@ -431,7 +401,7 @@ export const InicioView: React.FC<InicioViewProps> = ({
                   </div>
                 </div>
                 <div className="text-right font-mono-cyber shrink-0 pl-2">
-                  <div className="text-xs text-[#00f3ff] font-semibold whitespace-nowrap">POS #{h.worldRank}</div>
+                  <div className="text-xs text-[#00f3ff] font-semibold whitespace-nowrap">POS {h.worldRank}</div>
                   <div className="text-[10px] text-[#ffcc00] whitespace-nowrap">AMEAÇA: {h.threatLevel}</div>
                 </div>
               </div>

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Hero, RankLetter, ThreatLevel, HeroStatus, PowerType, Team, Country } from '../types';
-import { X, Image as ImageIcon, Sparkles, Check, User, Shield, Zap, Users, AlertTriangle } from 'lucide-react';
-import { getPowerTypeStyle } from '../utils/powerColors';
+import { X, Image as ImageIcon, Sparkles, Check, User, Shield, Zap, Users, AlertTriangle, Upload } from 'lucide-react';
+import { getPowerTypeStyle, SORTED_POWER_TYPES, sortPowerTypes } from '../utils/powerColors';
 import { THREAT_LEVEL_OPTIONS, getThreatLevelStyle, formatFollowers, formatFollowersFull, formatHeroRank } from '../utils/threatColors';
 
 interface HeroModalProps {
@@ -13,17 +13,7 @@ interface HeroModalProps {
   availableCountries: Country[];
 }
 
-const ALL_POWER_TYPES: PowerType[] = [
-  'Científico',
-  'Tecnológico',
-  'Místico',
-  'Cósmico',
-  'Treinamento',
-  'Mutante',
-  'Psíquico',
-  'Biológico',
-  'Outro',
-];
+const ALL_POWER_TYPES: PowerType[] = SORTED_POWER_TYPES;
 
 export const HeroModal: React.FC<HeroModalProps> = ({
   isOpen,
@@ -46,8 +36,61 @@ export const HeroModal: React.FC<HeroModalProps> = ({
   const [followers, setFollowers] = useState<number | ''>(12500000);
   const [portrait, setPortrait] = useState('');
   const [civilianPortrait, setCivilianPortrait] = useState('');
+  const [squarePortrait, setSquarePortrait] = useState('');
   const [powersAndCompetencies, setPowersAndCompetencies] = useState('');
   const [bio, setBio] = useState('');
+
+  const portraitFileInputRef = useRef<HTMLInputElement>(null);
+  const civilianFileInputRef = useRef<HTMLInputElement>(null);
+  const squareFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePortraitFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('A imagem deve ter menos de 5MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setPortrait(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCivilianFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('A imagem deve ter menos de 5MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setCivilianPortrait(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSquareFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('A imagem deve ter menos de 5MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setSquarePortrait(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -60,9 +103,9 @@ export const HeroModal: React.FC<HeroModalProps> = ({
 
       // Handle power types (supporting either array or legacy single string)
       if (Array.isArray(initialData.powerTypes) && initialData.powerTypes.length > 0) {
-        setPowerTypes(initialData.powerTypes);
+        setPowerTypes(sortPowerTypes(initialData.powerTypes as PowerType[]));
       } else if (initialData.powerType) {
-        setPowerTypes(Array.isArray(initialData.powerType) ? initialData.powerType : [initialData.powerType]);
+        setPowerTypes(sortPowerTypes((Array.isArray(initialData.powerType) ? initialData.powerType : [initialData.powerType]) as PowerType[]));
       } else {
         setPowerTypes(['Científico']);
       }
@@ -91,6 +134,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
       setFollowers(initialData.followers !== undefined ? initialData.followers : 10000000);
       setPortrait(initialData.portrait || '');
       setCivilianPortrait(initialData.civilianPortrait || '');
+      setSquarePortrait(initialData.squarePortrait || '');
       setPowersAndCompetencies(initialData.powersAndCompetencies || '');
       setBio(initialData.bio || '');
     } else {
@@ -108,6 +152,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
       setFollowers(10000000);
       setPortrait('');
       setCivilianPortrait('');
+      setSquarePortrait('');
       setPowersAndCompetencies('');
       setBio('');
     }
@@ -136,6 +181,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
       `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600`;
 
     const parsedFollowers = typeof followers === 'number' ? followers : 0;
+    const sortedTypes = sortPowerTypes<PowerType>(powerTypes.length > 0 ? powerTypes : ['Científico']);
 
     const heroToSave: Hero = {
       id: initialData?.id || 'h_' + Date.now(),
@@ -145,14 +191,15 @@ export const HeroModal: React.FC<HeroModalProps> = ({
       team: team.trim().toUpperCase() || 'INDEPENDENTE',
       worldRank: rankNum,
       rankLetter,
-      powerTypes: powerTypes.length > 0 ? powerTypes : ['Científico'],
-      powerType: powerTypes[0] || 'Científico',
+      powerTypes: sortedTypes,
+      powerType: sortedTypes[0] || 'Científico',
       threatLevel,
       status,
       popularity: Number(popularity),
       followers: parsedFollowers,
       portrait: portraitUrl,
       civilianPortrait: civilianPortrait.trim() || undefined,
+      squarePortrait: squarePortrait.trim() || undefined,
       powersAndCompetencies: powersAndCompetencies.trim(),
       bio: bio.trim(),
       history: initialData?.history || [
@@ -260,7 +307,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
 
             <div>
               <label className="block text-[#7e9bb5] mb-1 font-medium flex items-center justify-between">
-                <span>Ranking Mundial (#) *:</span>
+                <span>Ranking Mundial *:</span>
                 <span className="text-[10px] px-1.5 py-0.2 bg-[#00f3ff]/15 text-[#00f3ff] border border-[#00f3ff]/40 rounded font-mono-cyber font-bold">
                   {formatHeroRank(rankLetter, typeof worldRank === 'number' ? worldRank : 1)}
                 </span>
@@ -459,28 +506,48 @@ export const HeroModal: React.FC<HeroModalProps> = ({
             </div>
           </div>
 
-          {/* Image Inputs with 9:16 Aspect Ratio Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Image Inputs: Traje (9:16), Civil (9:16), Destaque Início (1:1) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Primary Hero Portrait (9:16) */}
             <div className="hud-border p-4 bg-[#05080d]/50 space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-[#00f3ff] font-semibold flex items-center space-x-1.5">
-                  <Shield size={14} />
-                  <span>RETRATO DO TRAJE / HERÓI (9:16) *</span>
-                </label>
-                <span className="text-[10px] text-[#00f3ff] px-1.5 py-0.5 rounded bg-cyan-950/60 border border-[#00f3ff]/30">
-                  Resolução 9:16
-                </span>
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <div className="flex items-center space-x-2">
+                  <label className="text-[#00f3ff] font-semibold flex items-center space-x-1.5">
+                    <Shield size={14} />
+                    <span>RETRATO TRAJE (9:16) *</span>
+                  </label>
+                  <span className="text-[10px] text-[#00f3ff] px-1.5 py-0.5 rounded bg-cyan-950/60 border border-[#00f3ff]/30">
+                    9:16
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="file"
+                    ref={portraitFileInputRef}
+                    onChange={handlePortraitFileUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => portraitFileInputRef.current?.click()}
+                    className="px-2.5 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] text-[10px] rounded hover:bg-[#00f3ff]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,243,255,0.2)] font-mono-cyber"
+                  >
+                    <Upload size={11} />
+                    <span>ENVIAR ARQUIVO</span>
+                  </button>
+                </div>
               </div>
 
               {/* 9:16 Image Preview Box */}
               <div className="flex gap-3 items-start">
-                <div className="w-24 aspect-[9/16] border border-[#00f3ff]/60 bg-[#05080d] overflow-hidden relative shrink-0 rounded">
+                <div className="w-20 aspect-[9/16] border border-[#00f3ff]/60 bg-[#05080d] overflow-hidden relative shrink-0 rounded">
                   {portrait ? (
                     <img
                       src={portrait}
                       alt="Preview Traje"
                       className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src =
                           'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600';
@@ -500,10 +567,18 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                     type="url"
                     value={portrait}
                     onChange={(e) => setPortrait(e.target.value)}
-                    placeholder="https://exemplo.com/traje.jpg"
+                    placeholder="https://exemplo.com/traje.jpg ou envie um arquivo"
                     className="w-full bg-[#05080d] border border-[#16283d] p-2 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none text-xs"
                   />
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap items-center">
+                    <button
+                      type="button"
+                      onClick={() => portraitFileInputRef.current?.click()}
+                      className="px-2 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#00f3ff]/20 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Upload size={12} />
+                      <span>Enviar Arquivo</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() =>
@@ -517,10 +592,10 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                           ][Math.floor(Math.random() * 5)]}?auto=format&fit=crop&q=80&w=600`
                         )
                       }
-                      className="px-2.5 py-1 bg-[#16283d] text-[#00f3ff] hover:bg-[#16283d]/80 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
+                      className="px-2 py-1 bg-[#16283d] text-[#00f3ff] hover:bg-[#16283d]/80 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
                     >
                       <ImageIcon size={12} />
-                      <span>Gerar Exemplo</span>
+                      <span>Exemplo</span>
                     </button>
                     {portrait && (
                       <button
@@ -533,7 +608,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                     )}
                   </div>
                   <p className="text-[10px] text-[#7e9bb5]">
-                    Imagem oficial do super-humano com traje de combate ou manifestação de poder.
+                    Traje oficial. Usado no Ranking, Catálogo e Dossiê.
                   </p>
                 </div>
               </div>
@@ -541,24 +616,44 @@ export const HeroModal: React.FC<HeroModalProps> = ({
 
             {/* Secondary Civilian Portrait (9:16 - Optional) */}
             <div className="hud-border p-4 bg-[#05080d]/50 space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-[#ffcc00] font-semibold flex items-center space-x-1.5">
-                  <User size={14} />
-                  <span>RETRATO CIVIL (9:16 — OPCIONAL)</span>
-                </label>
-                <span className="text-[10px] text-[#ffcc00] px-1.5 py-0.5 rounded bg-yellow-950/40 border border-[#ffcc00]/30">
-                  Resolução 9:16
-                </span>
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <div className="flex items-center space-x-2">
+                  <label className="text-[#ffcc00] font-semibold flex items-center space-x-1.5">
+                    <User size={14} />
+                    <span>RETRATO CIVIL (9:16)</span>
+                  </label>
+                  <span className="text-[10px] text-[#ffcc00] px-1.5 py-0.5 rounded bg-yellow-950/40 border border-[#ffcc00]/30">
+                    9:16
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="file"
+                    ref={civilianFileInputRef}
+                    onChange={handleCivilianFileUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => civilianFileInputRef.current?.click()}
+                    className="px-2.5 py-1 bg-[#05080d] border border-[#ffcc00]/60 text-[#ffcc00] text-[10px] rounded hover:bg-[#ffcc00]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(255,204,0,0.2)] font-mono-cyber"
+                  >
+                    <Upload size={11} />
+                    <span>ENVIAR ARQUIVO</span>
+                  </button>
+                </div>
               </div>
 
               {/* 9:16 Civil Image Preview Box */}
               <div className="flex gap-3 items-start">
-                <div className="w-24 aspect-[9/16] border border-[#ffcc00]/60 bg-[#05080d] overflow-hidden relative shrink-0 rounded">
+                <div className="w-20 aspect-[9/16] border border-[#ffcc00]/60 bg-[#05080d] overflow-hidden relative shrink-0 rounded">
                   {civilianPortrait ? (
                     <img
                       src={civilianPortrait}
                       alt="Preview Civil"
                       className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src =
                           'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600';
@@ -567,7 +662,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-[#7e9bb5] p-1 text-center text-[10px]">
                       <User size={18} className="mb-1 text-[#ffcc00]/50" />
-                      <span>Civil 9:16</span>
+                      <span>Civil</span>
                     </div>
                   )}
                 </div>
@@ -578,10 +673,18 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                     type="url"
                     value={civilianPortrait}
                     onChange={(e) => setCivilianPortrait(e.target.value)}
-                    placeholder="https://exemplo.com/civil.jpg (Opcional)"
+                    placeholder="https://exemplo.com/civil.jpg (Opcional) ou envie um arquivo"
                     className="w-full bg-[#05080d] border border-[#16283d] p-2 rounded text-[#e2f1ff] focus:border-[#ffcc00] focus:outline-none text-xs"
                   />
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap items-center">
+                    <button
+                      type="button"
+                      onClick={() => civilianFileInputRef.current?.click()}
+                      className="px-2 py-1 bg-[#05080d] border border-[#ffcc00]/60 text-[#ffcc00] hover:bg-[#ffcc00]/20 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Upload size={12} />
+                      <span>Enviar Arquivo</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() =>
@@ -594,10 +697,10 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                           ][Math.floor(Math.random() * 4)]}?auto=format&fit=crop&q=80&w=600`
                         )
                       }
-                      className="px-2.5 py-1 bg-[#16283d] text-[#ffcc00] hover:bg-[#16283d]/80 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
+                      className="px-2 py-1 bg-[#16283d] text-[#ffcc00] hover:bg-[#16283d]/80 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
                     >
                       <User size={12} />
-                      <span>Exemplo Civil</span>
+                      <span>Exemplo</span>
                     </button>
                     {civilianPortrait && (
                       <button
@@ -610,7 +713,112 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                     )}
                   </div>
                   <p className="text-[10px] text-[#7e9bb5]">
-                    Fotografia de identidade civil sem traje, utilizada para controle de vigilância e dossiê.
+                    Identidade civil sem traje, para vigilância e dossiê.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 1:1 Square Portrait for Top 3 / Top 10 in Home View */}
+            <div className="hud-border p-4 bg-[#05080d]/50 space-y-3">
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <div className="flex items-center space-x-2">
+                  <label className="text-[#00ff66] font-semibold flex items-center space-x-1.5">
+                    <Sparkles size={14} />
+                    <span>DESTAQUE INÍCIO (1:1)</span>
+                  </label>
+                  <span className="text-[10px] text-[#00ff66] px-1.5 py-0.5 rounded bg-emerald-950/40 border border-[#00ff66]/30">
+                    1:1 Quadrada
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="file"
+                    ref={squareFileInputRef}
+                    onChange={handleSquareFileUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => squareFileInputRef.current?.click()}
+                    className="px-2.5 py-1 bg-[#05080d] border border-[#00ff66]/60 text-[#00ff66] text-[10px] rounded hover:bg-[#00ff66]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,255,102,0.2)] font-mono-cyber"
+                  >
+                    <Upload size={11} />
+                    <span>ENVIAR ARQUIVO</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 1:1 Square Image Preview Box */}
+              <div className="flex gap-3 items-start">
+                <div className="w-20 aspect-square border border-[#00ff66]/60 bg-[#05080d] overflow-hidden relative shrink-0 rounded">
+                  {squarePortrait ? (
+                    <img
+                      src={squarePortrait}
+                      alt="Preview Destaque 1:1"
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src =
+                          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-[#7e9bb5] p-1 text-center text-[10px]">
+                      <Sparkles size={18} className="mb-1 text-[#00ff66]/50" />
+                      <span>1:1 Início</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <input
+                    id="formSquarePortrait"
+                    type="url"
+                    value={squarePortrait}
+                    onChange={(e) => setSquarePortrait(e.target.value)}
+                    placeholder="https://exemplo.com/foto-1x1.jpg (Opcional) ou envie um arquivo"
+                    className="w-full bg-[#05080d] border border-[#16283d] p-2 rounded text-[#e2f1ff] focus:border-[#00ff66] focus:outline-none text-xs"
+                  />
+                  <div className="flex gap-2 flex-wrap items-center">
+                    <button
+                      type="button"
+                      onClick={() => squareFileInputRef.current?.click()}
+                      className="px-2 py-1 bg-[#05080d] border border-[#00ff66]/60 text-[#00ff66] hover:bg-[#00ff66]/20 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Upload size={12} />
+                      <span>Enviar Arquivo</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSquarePortrait(
+                          `https://images.unsplash.com/photo-${[
+                            '1534528741775-53994a69daeb',
+                            '1507003211169-0a1dd7228f2d',
+                            '1517841905240-472988babdf9',
+                            '1500648767791-00dcc994a43e',
+                          ][Math.floor(Math.random() * 4)]}?auto=format&fit=crop&q=80&w=600`
+                        )
+                      }
+                      className="px-2 py-1 bg-[#16283d] text-[#00ff66] hover:bg-[#16283d]/80 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Sparkles size={12} />
+                      <span>Exemplo</span>
+                    </button>
+                    {squarePortrait && (
+                      <button
+                        type="button"
+                        onClick={() => setSquarePortrait('')}
+                        className="px-2 py-1 text-[#ff003c] hover:bg-red-950/30 rounded text-[11px] cursor-pointer"
+                      >
+                        Remover
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-[#7e9bb5]">
+                    Exibida apenas no TOP 3 e TOP 10 da aba Início. Em nenhum outro lugar.
                   </p>
                 </div>
               </div>

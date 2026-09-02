@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Team, Hero } from '../types';
-import { X, Users, Plus, Trash2, Image as ImageIcon, Sparkles, Shield } from 'lucide-react';
+import { X, Users, Plus, Trash2, Image as ImageIcon, Sparkles, Shield, Upload, AlertCircle } from 'lucide-react';
 
 interface TeamModalProps {
   isOpen: boolean;
@@ -32,6 +32,8 @@ export const TeamModal: React.FC<TeamModalProps> = ({
   const [desc, setDesc] = useState('');
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [customMember, setCustomMember] = useState('');
+  const [previewError, setPreviewError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -42,14 +44,16 @@ export const TeamModal: React.FC<TeamModalProps> = ({
       setRank(initialData.rank || '#1');
       setDesc(initialData.desc || '');
       setSelectedMembers(initialData.members || []);
+      setPreviewError(false);
     } else {
       setName('');
       setAbbreviation('');
-      setEmblem('https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&q=80&w=400');
+      setEmblem('');
       setScope('');
       setRank('#1');
       setDesc('');
       setSelectedMembers([]);
+      setPreviewError(false);
     }
   }, [initialData, isOpen]);
 
@@ -70,6 +74,26 @@ export const TeamModal: React.FC<TeamModalProps> = ({
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size (< 3MB)
+    if (file.size > 3 * 1024 * 1024) {
+      alert('A imagem deve ter menos de 3MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setEmblem(event.target.result as string);
+        setPreviewError(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
@@ -78,7 +102,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
       id: initialData?.id || 't_' + Date.now(),
       name: name.trim().toUpperCase(),
       abbreviation: abbreviation.trim().toUpperCase() || undefined,
-      emblem: emblem.trim() || 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&q=80&w=400',
+      emblem: emblem.trim() || (abbreviation.trim().toUpperCase() || name.trim().toUpperCase().slice(0, 3) || 'Ω'),
       scope: scope.trim() || 'Internacional / Global',
       rank: rank.trim() || '#1',
       desc: desc.trim(),
@@ -160,31 +184,70 @@ export const TeamModal: React.FC<TeamModalProps> = ({
 
           {/* Square Image 1:1 Section for Emblem */}
           <div className="space-y-2 hud-border p-3.5 bg-[#05080d]/60 rounded">
-            <label className="block text-[#00f3ff] font-medium flex items-center space-x-1.5">
-              <ImageIcon size={14} className="text-[#00f3ff]" />
-              <span>SÍMBOLO / EMBLEMA DA EQUIPE (IMAGEM QUADRADA 1:1) *:</span>
-            </label>
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <label className="block text-[#00f3ff] font-medium flex items-center space-x-1.5">
+                <ImageIcon size={14} className="text-[#00f3ff]" />
+                <span>SÍMBOLO / EMBLEMA DA EQUIPE (IMAGEM 1:1 OU SIGLA):</span>
+              </label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-2.5 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] text-[10px] rounded hover:bg-[#00f3ff]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,243,255,0.2)]"
+                >
+                  <Upload size={11} />
+                  <span>ENVIAR ARQUIVO</span>
+                </button>
+                {emblem && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmblem('');
+                      setPreviewError(false);
+                    }}
+                    className="px-2 py-1 bg-[#05080d] border border-[#ff003c]/40 text-[#ff003c] text-[10px] rounded hover:bg-[#ff003c]/20 cursor-pointer"
+                  >
+                    LIMPAR
+                  </button>
+                )}
+              </div>
+            </div>
             <p className="text-[11px] text-[#7e9bb5]">
-              Insira a URL de uma imagem quadrada (1:1) com o brasão, logotipo ou ícone oficial da equipe.
+              Insira a URL de uma imagem quadrada (1:1), faça upload de arquivo do seu computador ou defina uma sigla/símbolo.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 items-center pt-1">
               {/* 1:1 Square Preview Box */}
               <div className="w-20 h-20 aspect-square rounded border border-[#00f3ff] overflow-hidden bg-[#05080d] flex-shrink-0 flex items-center justify-center relative group shadow-[0_0_10px_rgba(0,243,255,0.2)]">
-                {emblem ? (
+                {emblem && (emblem.startsWith('http') || emblem.startsWith('/') || emblem.startsWith('data:image')) && !previewError ? (
                   <img
                     src={emblem}
                     alt="Preview do emblema"
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&q=80&w=400';
+                    onError={() => {
+                      setPreviewError(true);
                     }}
                   />
                 ) : (
-                  <div className="text-center text-[#7e9bb5] p-2">
-                    <Shield size={22} className="mx-auto text-[#00f3ff]/40 mb-1" />
-                    <span className="text-[9px]">1:1</span>
+                  <div className="text-center text-[#7e9bb5] p-2 flex flex-col items-center justify-center">
+                    {emblem && emblem.length <= 4 ? (
+                      <span className="text-lg font-bold text-[#00f3ff] font-mono-cyber">{emblem}</span>
+                    ) : (
+                      <>
+                        <Shield size={22} className="mx-auto text-[#00f3ff]/40 mb-1" />
+                        <span className="text-[9px] text-[#00f3ff]">
+                          {(abbreviation || name.slice(0, 3) || '1:1').toUpperCase()}
+                        </span>
+                      </>
+                    )}
                   </div>
                 )}
                 <div className="absolute bottom-0 inset-x-0 bg-black/80 text-[8px] text-[#00f3ff] text-center font-mono-cyber py-0.5">
@@ -195,14 +258,23 @@ export const TeamModal: React.FC<TeamModalProps> = ({
               {/* URL Input */}
               <div className="flex-1 w-full space-y-2">
                 <input
-                  type="url"
-                  required
+                  type="text"
                   value={emblem}
-                  onChange={(e) => setEmblem(e.target.value)}
-                  placeholder="https://exemplo.com/emblema-equipe.jpg"
+                  onChange={(e) => {
+                    setEmblem(e.target.value);
+                    setPreviewError(false);
+                  }}
+                  placeholder="https://exemplo.com/emblema.jpg ou faça upload acima"
                   className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none"
                 />
                 
+                {previewError && (
+                  <div className="flex items-center space-x-1 text-[10px] text-amber-400">
+                    <AlertCircle size={11} />
+                    <span>Não foi possível carregar a imagem externa pela URL. Considere usar o botão "Enviar Arquivo".</span>
+                  </div>
+                )}
+
                 {/* Quick Presets */}
                 <div className="flex flex-wrap gap-1.5 items-center">
                   <span className="text-[10px] text-[#7e9bb5] flex items-center gap-1">
@@ -213,7 +285,10 @@ export const TeamModal: React.FC<TeamModalProps> = ({
                     <button
                       key={sample.name}
                       type="button"
-                      onClick={() => setEmblem(sample.url)}
+                      onClick={() => {
+                        setEmblem(sample.url);
+                        setPreviewError(false);
+                      }}
                       className="px-2 py-0.5 text-[10px] bg-[#09101a] border border-[#16283d] text-[#7e9bb5] hover:text-[#00f3ff] hover:border-[#00f3ff]/50 rounded cursor-pointer transition-colors"
                     >
                       {sample.name}

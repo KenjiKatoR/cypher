@@ -25,6 +25,7 @@ export interface Hero {
   civilianName: string;
   portrait: string; // 9:16 hero costume portrait
   civilianPortrait?: string; // 9:16 optional civilian portrait
+  squarePortrait?: string; // 1:1 square portrait specifically for Home view TOP 3 / TOP 10
   country: string;
   team: string;
   worldRank: number;

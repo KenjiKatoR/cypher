@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Hero } from '../../types';
 import { Search, Filter, ArrowUpDown, Plus, Eye, Edit2, Trash2, ShieldAlert, Lock, User, Sparkles, RotateCcw } from 'lucide-react';
-import { getPowerTypeStyle } from '../../utils/powerColors';
+import { getPowerTypeStyle, sortPowerTypes } from '../../utils/powerColors';
 import { getThreatLevelStyle, formatFollowers, formatHeroRank, compareHeroesHierarchical } from '../../utils/threatColors';
 
 interface RankingViewProps {
@@ -188,7 +188,7 @@ export const RankingView: React.FC<RankingViewProps> = ({
               <th className="p-3">POS</th>
               <th className="p-3">RETRATO (9:16)</th>
               <th className="p-3">CODINOME / CIVIL</th>
-              <th className="p-3">PAÍS / EQUIPE</th>
+              <th className="p-3">EQUIPE / PAÍS</th>
               <th className="p-3">TIPO DE PODER</th>
               <th className="p-3 text-center">SEGUIDORES</th>
               <th className="p-3 text-center">POPULARIDADE</th>
@@ -223,7 +223,7 @@ export const RankingView: React.FC<RankingViewProps> = ({
                         {formatHeroRank(h.rankLetter, h.worldRank)}
                       </span>
                       <span className="text-[10px] text-[#7e9bb5] font-mono-cyber whitespace-nowrap shrink-0">
-                        #{displayPosition}
+                        {displayPosition}º
                       </span>
                     </div>
                   </td>
@@ -263,17 +263,17 @@ export const RankingView: React.FC<RankingViewProps> = ({
                     <div className="text-[10px] text-[#7e9bb5]">{h.civilianName}</div>
                   </td>
 
-                  {/* Country & Team */}
+                  {/* Team & Country */}
                   <td className="p-3">
-                    <div className="text-[#e2f1ff]">{h.country}</div>
-                    <div className="text-[10px] text-[#7e9bb5]">{h.team}</div>
+                    <div className="font-semibold text-[#e2f1ff]">{h.team || 'INDEPENDENTE'}</div>
+                    <div className="text-[10px] text-[#7e9bb5]">{h.country}</div>
                   </td>
 
                   {/* Power Types with Congruent Badges */}
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1">
                       {h.powerTypes && h.powerTypes.length > 0 ? (
-                        h.powerTypes.map((pt) => {
+                        sortPowerTypes(h.powerTypes).map((pt) => {
                           const style = getPowerTypeStyle(pt);
                           return (
                             <span

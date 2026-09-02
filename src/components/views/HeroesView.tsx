@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Hero, PowerType, RankLetter, HeroStatus } from '../../types';
 import { Search, Plus, Eye, Edit2, Trash2, Shield, Lock, User, Filter, RotateCcw } from 'lucide-react';
-import { getPowerTypeStyle, POWER_TYPE_STYLES } from '../../utils/powerColors';
+import { getPowerTypeStyle, POWER_TYPE_STYLES, SORTED_POWER_TYPES, sortPowerTypes } from '../../utils/powerColors';
 import { getThreatLevelStyle, formatFollowers, formatHeroRank, compareHeroesHierarchical } from '../../utils/threatColors';
 
 interface HeroesViewProps {
@@ -13,17 +13,7 @@ interface HeroesViewProps {
   isAdmin: boolean;
 }
 
-const POWER_TYPE_OPTIONS: PowerType[] = [
-  'Científico',
-  'Tecnológico',
-  'Místico',
-  'Cósmico',
-  'Treinamento',
-  'Mutante',
-  'Psíquico',
-  'Biológico',
-  'Outro',
-];
+const POWER_TYPE_OPTIONS: PowerType[] = SORTED_POWER_TYPES;
 
 export const HeroesView: React.FC<HeroesViewProps> = ({
   heroes,
@@ -275,7 +265,7 @@ export const HeroesView: React.FC<HeroesViewProps> = ({
                         {rankCode}
                       </span>
                       <span className="text-[10px] font-mono-cyber px-1.5 py-0.5 bg-[#05080d] border border-[#16283d] text-[#7e9bb5] rounded whitespace-nowrap shrink-0">
-                        POS #{h.worldRank}
+                        POS {h.worldRank}
                       </span>
                     </div>
                     <span
@@ -336,7 +326,7 @@ export const HeroesView: React.FC<HeroesViewProps> = ({
                   {/* Power Type Badges with Congruent Colors */}
                   <div className="flex flex-wrap items-center gap-1 text-[10px] font-mono-cyber mb-3">
                     {h.powerTypes && h.powerTypes.length > 0 ? (
-                      h.powerTypes.map((pt) => {
+                      sortPowerTypes(h.powerTypes).map((pt) => {
                         const style = getPowerTypeStyle(pt);
                         return (
                           <span

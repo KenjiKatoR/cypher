@@ -210,7 +210,7 @@ export default function App() {
       showAlert('REGISTRO ATUALIZADO (SERVER)', `O dossiê de ${savedHero.codename} foi atualizado no servidor central e sincronizado para todos os usuários.`, 'success');
     } else {
       await createHeroOnServer(savedHero);
-      showAlert('NOVO HERÓI INDEXADO (SERVER)', `O herói ${savedHero.codename} foi salvo no servidor central (#${savedHero.worldRank}) e transmitido para todos os usuários.`, 'success');
+      showAlert('NOVO HERÓI INDEXADO (SERVER)', `O herói ${savedHero.codename} foi salvo no servidor central (Posição ${savedHero.worldRank}) e transmitido para todos os usuários.`, 'success');
     }
 
     // Refresh server state

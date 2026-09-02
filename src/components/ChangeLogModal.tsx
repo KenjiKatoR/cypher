@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RankingChange, Hero } from '../types';
 import { X, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { formatHeroRank } from '../utils/threatColors';
 
 interface ChangeLogModalProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ export const ChangeLogModal: React.FC<ChangeLogModalProps> = ({
       setDate(initialData.date || '');
     } else {
       setHero(availableHeroes[0]?.codename || '');
-      setChange('#04 → #01');
+      setChange('S-004 → S-001');
       setType('up');
       setReason('');
       setDate(new Date().toLocaleDateString('pt-BR'));
@@ -90,7 +91,7 @@ export const ChangeLogModal: React.FC<ChangeLogModalProps> = ({
                   <option value="">Selecione um herói ou digite...</option>
                   {availableHeroes.map((h) => (
                     <option key={h.id} value={h.codename}>
-                      #{String(h.worldRank).padStart(2, '0')} — {h.codename} ({h.team})
+                      {formatHeroRank(h.rankLetter, h.worldRank)} — {h.codename} ({h.team})
                     </option>
                   ))}
                 </select>
@@ -122,7 +123,7 @@ export const ChangeLogModal: React.FC<ChangeLogModalProps> = ({
                 required
                 value={change}
                 onChange={(e) => setChange(e.target.value)}
-                placeholder="Ex: #04 → #01 ou #01 → #02"
+                placeholder="Ex: S-004 → S-001 ou S-001 → S-002"
                 className="w-full bg-[#05080d] border border-[#16283d] p-2.5 rounded text-[#e2f1ff] focus:border-[#00f3ff] focus:outline-none"
               />
             </div>

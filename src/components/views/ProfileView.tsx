@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Hero, PowerType } from '../../types';
 import { ArrowLeft, Fingerprint, Edit2, Trash2, Sparkles, Zap, Shield, User, Globe, Users, Lock, AlertTriangle } from 'lucide-react';
-import { getPowerTypeStyle } from '../../utils/powerColors';
+import { getPowerTypeStyle, sortPowerTypes } from '../../utils/powerColors';
 import { getThreatLevelStyle, formatFollowers, formatFollowersFull, formatHeroRank } from '../../utils/threatColors';
 
 interface ProfileViewProps {
@@ -33,14 +33,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     );
   }
 
-  // Normalizing power types
-  const heroPowerTypes: PowerType[] = Array.isArray(hero.powerTypes) && hero.powerTypes.length > 0
+  // Normalizing and sorting power types alphabetically
+  const rawPowerTypes: PowerType[] = Array.isArray(hero.powerTypes) && hero.powerTypes.length > 0
     ? hero.powerTypes
     : hero.powerType
     ? Array.isArray(hero.powerType)
       ? hero.powerType
       : [hero.powerType]
     : ['Científico'];
+  const heroPowerTypes: PowerType[] = sortPowerTypes(rawPowerTypes);
 
   const threatStyle = getThreatLevelStyle(hero.threatLevel);
 

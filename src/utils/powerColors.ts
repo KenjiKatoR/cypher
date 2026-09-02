@@ -104,6 +104,22 @@ export const POWER_TYPE_STYLES: Record<string, PowerTypeStyle> = {
   },
 };
 
+export const SORTED_POWER_TYPES: PowerType[] = [
+  'Biológico',
+  'Científico',
+  'Cósmico',
+  'Místico',
+  'Mutante',
+  'Outro',
+  'Psíquico',
+  'Tecnológico',
+  'Treinamento',
+];
+
+export function sortPowerTypes<T extends PowerType | string = PowerType>(types: T[] = []): T[] {
+  return [...types].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+}
+
 export function getPowerTypeStyle(powerType: string): PowerTypeStyle {
   if (POWER_TYPE_STYLES[powerType]) {
     return POWER_TYPE_STYLES[powerType];

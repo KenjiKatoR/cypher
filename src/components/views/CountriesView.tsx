@@ -39,7 +39,7 @@ export const CountriesView: React.FC<CountriesViewProps> = ({
             )}
           </div>
           <p className="text-xs text-[#7e9bb5] font-mono-cyber mt-1">
-            ESTATÍSTICAS, TRATADOS BALÍSTICOS E HERÓIS VINCULADOS POR GOVERNO
+            ESTATÍSTICAS E HERÓIS VINCULADOS POR GOVERNO
           </p>
         </div>
 

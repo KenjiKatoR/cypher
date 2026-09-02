@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Team, Hero } from '../../types';
 import { Plus, Users, Edit2, Trash2, Shield, Lock } from 'lucide-react';
 import { formatHeroRank } from '../../utils/threatColors';
@@ -13,6 +13,13 @@ interface TeamsViewProps {
   isAdmin: boolean;
 }
 
+// Function to extract numerical rank for accurate sorting
+const parseTeamRankNumber = (rankStr?: string): number => {
+  if (!rankStr) return 999999;
+  const match = rankStr.match(/\d+/);
+  return match ? parseInt(match[0], 10) : 999999;
+};
+
 export const TeamsView: React.FC<TeamsViewProps> = ({
   teams,
   heroes,
@@ -22,6 +29,21 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   onDeleteTeam,
   isAdmin,
 }) => {
+  // Track failed image URLs so we gracefully show stylized team initials instead of overwriting with sample photos
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+
+  // Sort teams hierarchically by classification rank (#1, #2, etc.)
+  const sortedTeams = useMemo(() => {
+    return [...teams].sort((a, b) => {
+      const numA = parseTeamRankNumber(a.rank);
+      const numB = parseTeamRankNumber(b.rank);
+      if (numA !== numB) return numA - numB;
+      const rankComp = (a.rank || '').localeCompare(b.rank || '', 'pt-BR');
+      if (rankComp !== 0) return rankComp;
+      return a.name.localeCompare(b.name, 'pt-BR');
+    });
+  }, [teams]);
+
   return (
     <div id="view-teams" className="space-y-6">
       {/* Header */}
@@ -55,7 +77,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
       </div>
 
       {/* Teams Grid */}
-      {teams.length === 0 ? (
+      {sortedTeams.length === 0 ? (
         <div className="hud-border p-12 text-center space-y-3 bg-[#09101a]/60">
           <Users size={32} className="mx-auto text-[#00f3ff]/40" />
           <div className="font-mono-cyber text-sm text-[#e2f1ff] font-semibold">
@@ -76,7 +98,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
         </div>
       ) : (
         <div id="teamsContainer" className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {teams.map((t) => {
+          {sortedTeams.map((t) => {
             // Count registered heroes in this team
             const teamHeroes = heroes.filter(
               (h) => h.team.toUpperCase() === t.name.toUpperCase()
@@ -87,27 +109,37 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               new Set([...(t.members || []), ...teamHeroes.map((h) => h.codename)])
             );
 
-            const isImageUrl = t.emblem && (t.emblem.startsWith('http') || t.emblem.startsWith('/'));
+            const hasValidImage =
+              Boolean(t.emblem) &&
+              (t.emblem.startsWith('http') || t.emblem.startsWith('/') || t.emblem.startsWith('data:image')) &&
+              !imageErrors[t.id];
 
             return (
               <div key={t.id} className="hud-border p-5 space-y-4 bg-[#09101a] hover:border-[#00f3ff]/60 transition-colors">
                 <div className="flex justify-between items-start border-b border-[#16283d] pb-3">
                   <div className="flex items-center space-x-3">
-                    {isImageUrl ? (
+                    {hasValidImage ? (
                       <div className="w-12 h-12 aspect-square rounded border border-[#00f3ff]/60 overflow-hidden bg-[#05080d] flex-shrink-0 shadow-[0_0_8px_rgba(0,243,255,0.25)]">
                         <img
                           src={t.emblem}
                           alt={t.name}
+                          referrerPolicy="no-referrer"
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src =
-                              'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&q=80&w=200';
+                          onError={() => {
+                            // Do not replace with a random sample photo! Mark as error to render stylized tactical emblem
+                            setImageErrors((prev) => ({ ...prev, [t.id]: true }));
                           }}
                         />
                       </div>
                     ) : (
-                      <div className="w-11 h-11 hud-border flex items-center justify-center text-[#00f3ff] font-mono-cyber font-bold text-lg hud-border-glow bg-[#05080d]">
-                        {t.emblem || 'Ω'}
+                      <div className="w-12 h-12 aspect-square hud-border flex flex-col items-center justify-center text-[#00f3ff] font-mono-cyber font-bold hud-border-glow bg-[#05080d] flex-shrink-0">
+                        {t.emblem && t.emblem.length <= 4 ? (
+                          <span className="text-base">{t.emblem}</span>
+                        ) : (
+                          <span className="text-xs tracking-wider">
+                            {(t.abbreviation || t.name.slice(0, 3)).toUpperCase()}
+                          </span>
+                        )}
                       </div>
                     )}
                     <div>
@@ -124,7 +156,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <span className="px-2.5 py-1 rounded bg-[#05080d] border border-[#00f3ff] text-[#00f3ff] font-mono-cyber text-xs font-bold">
+                    <span className="px-2.5 py-1 rounded bg-[#05080d] border border-[#00f3ff] text-[#00f3ff] font-mono-cyber text-xs font-bold shadow-[0_0_6px_rgba(0,243,255,0.2)]">
                       {t.rank}
                     </span>
                     {isAdmin && (

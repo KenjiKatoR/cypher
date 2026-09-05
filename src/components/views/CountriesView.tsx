@@ -82,7 +82,9 @@ export const CountriesView: React.FC<CountriesViewProps> = ({
             );
             const activeHeroes = countryHeroes.filter((h) => (h.status || '').toUpperCase().includes('ATIV')).length;
             const topHero = [...countryHeroes].sort((a, b) => a.worldRank - b.worldRank)[0];
-            const isImageUrl = c.flag && (c.flag.startsWith('http') || c.flag.startsWith('/'));
+            const isImageUrl =
+              Boolean(c.flag) &&
+              (c.flag.startsWith('http') || c.flag.startsWith('/') || c.flag.startsWith('data:image'));
 
             return (
               <div

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Country } from '../types';
-import { X, Globe, Image as ImageIcon, Sparkles, Upload } from 'lucide-react';
+import { X, Globe, Image as ImageIcon, Sparkles, Upload, Loader2 } from 'lucide-react';
+import { processImageFile } from '../utils/imageUtils';
 
 interface CountryModalProps {
   isOpen: boolean;
@@ -27,24 +28,29 @@ export const CountryModal: React.FC<CountryModalProps> = ({
   const [code, setCode] = useState('');
   const [flag, setFlag] = useState('');
   const [rank, setRank] = useState('1º Nacional');
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('A imagem deve ter menos de 5MB.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setFlag(event.target.result as string);
+    try {
+      setIsUploading(true);
+      const optimizedDataUrl = await processImageFile(file, {
+        maxWidth: 600,
+        maxHeight: 600,
+        quality: 0.88,
+      });
+      setFlag(optimizedDataUrl);
+    } catch (err: any) {
+      console.error('Erro ao processar imagem:', err);
+    } finally {
+      setIsUploading(false);
+      if (e.target) {
+        e.target.value = '';
       }
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   useEffect(() => {
@@ -135,20 +141,30 @@ export const CountryModal: React.FC<CountryModalProps> = ({
               </label>
               <div className="flex items-center space-x-2">
                 <input
+                  id="country-flag-upload-input"
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileUpload}
                   accept="image/*"
-                  className="hidden"
+                  className="sr-only"
                 />
-                <button
-                  type="button"
+                <label
+                  htmlFor="country-flag-upload-input"
                   onClick={() => fileInputRef.current?.click()}
                   className="px-2.5 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] text-[10px] rounded hover:bg-[#00f3ff]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,243,255,0.2)]"
                 >
-                  <Upload size={11} />
-                  <span>ENVIAR ARQUIVO</span>
-                </button>
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={11} className="animate-spin text-[#00f3ff]" />
+                      <span>PROCESSANDO...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={11} />
+                      <span>ENVIAR ARQUIVO</span>
+                    </>
+                  )}
+                </label>
                 {flag && (
                   <button
                     type="button"
@@ -192,7 +208,7 @@ export const CountryModal: React.FC<CountryModalProps> = ({
               {/* URL Input */}
               <div className="flex-1 w-full space-y-2">
                 <input
-                  type="url"
+                  type="text"
                   required
                   value={flag}
                   onChange={(e) => setFlag(e.target.value)}

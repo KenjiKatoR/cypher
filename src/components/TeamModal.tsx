@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Team, Hero } from '../types';
-import { X, Users, Plus, Trash2, Image as ImageIcon, Sparkles, Shield, Upload, AlertCircle } from 'lucide-react';
+import { X, Users, Plus, Trash2, Image as ImageIcon, Sparkles, Shield, Upload, AlertCircle, Loader2 } from 'lucide-react';
+import { processImageFile } from '../utils/imageUtils';
 
 interface TeamModalProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [customMember, setCustomMember] = useState('');
   const [previewError, setPreviewError] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -74,24 +76,27 @@ export const TeamModal: React.FC<TeamModalProps> = ({
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check size (< 3MB)
-    if (file.size > 3 * 1024 * 1024) {
-      alert('A imagem deve ter menos de 3MB.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setEmblem(event.target.result as string);
-        setPreviewError(false);
+    try {
+      setIsUploading(true);
+      const optimizedDataUrl = await processImageFile(file, {
+        maxWidth: 600,
+        maxHeight: 600,
+        quality: 0.88,
+      });
+      setEmblem(optimizedDataUrl);
+      setPreviewError(false);
+    } catch (err: any) {
+      console.error('Erro ao processar emblema:', err);
+    } finally {
+      setIsUploading(false);
+      if (e.target) {
+        e.target.value = '';
       }
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -191,20 +196,30 @@ export const TeamModal: React.FC<TeamModalProps> = ({
               </label>
               <div className="flex items-center space-x-2">
                 <input
+                  id="team-emblem-upload-input"
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileUpload}
                   accept="image/*"
-                  className="hidden"
+                  className="sr-only"
                 />
-                <button
-                  type="button"
+                <label
+                  htmlFor="team-emblem-upload-input"
                   onClick={() => fileInputRef.current?.click()}
                   className="px-2.5 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] text-[10px] rounded hover:bg-[#00f3ff]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,243,255,0.2)]"
                 >
-                  <Upload size={11} />
-                  <span>ENVIAR ARQUIVO</span>
-                </button>
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={11} className="animate-spin text-[#00f3ff]" />
+                      <span>PROCESSANDO...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={11} />
+                      <span>ENVIAR ARQUIVO</span>
+                    </>
+                  )}
+                </label>
                 {emblem && (
                   <button
                     type="button"

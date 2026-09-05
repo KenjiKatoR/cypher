@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Hero, RankLetter, ThreatLevel, HeroStatus, PowerType, Team, Country } from '../types';
-import { X, Image as ImageIcon, Sparkles, Check, User, Shield, Zap, Users, AlertTriangle, Upload } from 'lucide-react';
+import { X, Image as ImageIcon, Sparkles, Check, User, Shield, Zap, Users, AlertTriangle, Upload, Loader2 } from 'lucide-react';
 import { getPowerTypeStyle, SORTED_POWER_TYPES, sortPowerTypes } from '../utils/powerColors';
 import { THREAT_LEVEL_OPTIONS, getThreatLevelStyle, formatFollowers, formatFollowersFull, formatHeroRank } from '../utils/threatColors';
+import { processImageFile } from '../utils/imageUtils';
 
 interface HeroModalProps {
   isOpen: boolean;
@@ -40,56 +41,78 @@ export const HeroModal: React.FC<HeroModalProps> = ({
   const [powersAndCompetencies, setPowersAndCompetencies] = useState('');
   const [bio, setBio] = useState('');
 
+  const [uploadingPortrait, setUploadingPortrait] = useState(false);
+  const [uploadingCivilian, setUploadingCivilian] = useState(false);
+  const [uploadingSquare, setUploadingSquare] = useState(false);
+
   const portraitFileInputRef = useRef<HTMLInputElement>(null);
   const civilianFileInputRef = useRef<HTMLInputElement>(null);
   const squareFileInputRef = useRef<HTMLInputElement>(null);
 
-  const handlePortraitFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePortraitFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert('A imagem deve ter menos de 5MB.');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setPortrait(event.target.result as string);
+
+    try {
+      setUploadingPortrait(true);
+      const dataUrl = await processImageFile(file, {
+        maxWidth: 1080,
+        maxHeight: 1920,
+        quality: 0.86,
+      });
+      setPortrait(dataUrl);
+    } catch (err) {
+      console.error('Erro ao carregar foto do traje:', err);
+    } finally {
+      setUploadingPortrait(false);
+      if (e.target) {
+        e.target.value = '';
       }
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
-  const handleCivilianFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCivilianFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert('A imagem deve ter menos de 5MB.');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setCivilianPortrait(event.target.result as string);
+
+    try {
+      setUploadingCivilian(true);
+      const dataUrl = await processImageFile(file, {
+        maxWidth: 1080,
+        maxHeight: 1920,
+        quality: 0.86,
+      });
+      setCivilianPortrait(dataUrl);
+    } catch (err) {
+      console.error('Erro ao carregar foto civil:', err);
+    } finally {
+      setUploadingCivilian(false);
+      if (e.target) {
+        e.target.value = '';
       }
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
-  const handleSquareFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSquareFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert('A imagem deve ter menos de 5MB.');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setSquarePortrait(event.target.result as string);
+
+    try {
+      setUploadingSquare(true);
+      const dataUrl = await processImageFile(file, {
+        maxWidth: 720,
+        maxHeight: 720,
+        quality: 0.88,
+      });
+      setSquarePortrait(dataUrl);
+    } catch (err) {
+      console.error('Erro ao carregar foto quadrada:', err);
+    } finally {
+      setUploadingSquare(false);
+      if (e.target) {
+        e.target.value = '';
       }
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   useEffect(() => {
@@ -522,20 +545,30 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
+                    id="hero-portrait-file-input"
                     type="file"
                     ref={portraitFileInputRef}
                     onChange={handlePortraitFileUpload}
                     accept="image/*"
-                    className="hidden"
+                    className="sr-only"
                   />
-                  <button
-                    type="button"
+                  <label
+                    htmlFor="hero-portrait-file-input"
                     onClick={() => portraitFileInputRef.current?.click()}
                     className="px-2.5 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] text-[10px] rounded hover:bg-[#00f3ff]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,243,255,0.2)] font-mono-cyber"
                   >
-                    <Upload size={11} />
-                    <span>ENVIAR ARQUIVO</span>
-                  </button>
+                    {uploadingPortrait ? (
+                      <>
+                        <Loader2 size={11} className="animate-spin text-[#00f3ff]" />
+                        <span>PROCESSANDO...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={11} />
+                        <span>ENVIAR ARQUIVO</span>
+                      </>
+                    )}
+                  </label>
                 </div>
               </div>
 
@@ -564,7 +597,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                 <div className="flex-1 space-y-2">
                   <input
                     id="formPortrait"
-                    type="url"
+                    type="text"
                     value={portrait}
                     onChange={(e) => setPortrait(e.target.value)}
                     placeholder="https://exemplo.com/traje.jpg ou envie um arquivo"
@@ -576,8 +609,8 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                       onClick={() => portraitFileInputRef.current?.click()}
                       className="px-2 py-1 bg-[#05080d] border border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#00f3ff]/20 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
                     >
-                      <Upload size={12} />
-                      <span>Enviar Arquivo</span>
+                      {uploadingPortrait ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                      <span>{uploadingPortrait ? 'Processando...' : 'Enviar Arquivo'}</span>
                     </button>
                     <button
                       type="button"
@@ -628,20 +661,30 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
+                    id="hero-civilian-file-input"
                     type="file"
                     ref={civilianFileInputRef}
                     onChange={handleCivilianFileUpload}
                     accept="image/*"
-                    className="hidden"
+                    className="sr-only"
                   />
-                  <button
-                    type="button"
+                  <label
+                    htmlFor="hero-civilian-file-input"
                     onClick={() => civilianFileInputRef.current?.click()}
                     className="px-2.5 py-1 bg-[#05080d] border border-[#ffcc00]/60 text-[#ffcc00] text-[10px] rounded hover:bg-[#ffcc00]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(255,204,0,0.2)] font-mono-cyber"
                   >
-                    <Upload size={11} />
-                    <span>ENVIAR ARQUIVO</span>
-                  </button>
+                    {uploadingCivilian ? (
+                      <>
+                        <Loader2 size={11} className="animate-spin text-[#ffcc00]" />
+                        <span>PROCESSANDO...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={11} />
+                        <span>ENVIAR ARQUIVO</span>
+                      </>
+                    )}
+                  </label>
                 </div>
               </div>
 
@@ -670,7 +713,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                 <div className="flex-1 space-y-2">
                   <input
                     id="formCivilianPortrait"
-                    type="url"
+                    type="text"
                     value={civilianPortrait}
                     onChange={(e) => setCivilianPortrait(e.target.value)}
                     placeholder="https://exemplo.com/civil.jpg (Opcional) ou envie um arquivo"
@@ -682,8 +725,8 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                       onClick={() => civilianFileInputRef.current?.click()}
                       className="px-2 py-1 bg-[#05080d] border border-[#ffcc00]/60 text-[#ffcc00] hover:bg-[#ffcc00]/20 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
                     >
-                      <Upload size={12} />
-                      <span>Enviar Arquivo</span>
+                      {uploadingCivilian ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                      <span>{uploadingCivilian ? 'Processando...' : 'Enviar Arquivo'}</span>
                     </button>
                     <button
                       type="button"
@@ -733,20 +776,30 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
+                    id="hero-square-file-input"
                     type="file"
                     ref={squareFileInputRef}
                     onChange={handleSquareFileUpload}
                     accept="image/*"
-                    className="hidden"
+                    className="sr-only"
                   />
-                  <button
-                    type="button"
+                  <label
+                    htmlFor="hero-square-file-input"
                     onClick={() => squareFileInputRef.current?.click()}
                     className="px-2.5 py-1 bg-[#05080d] border border-[#00ff66]/60 text-[#00ff66] text-[10px] rounded hover:bg-[#00ff66]/20 flex items-center space-x-1 cursor-pointer transition-colors shadow-[0_0_6px_rgba(0,255,102,0.2)] font-mono-cyber"
                   >
-                    <Upload size={11} />
-                    <span>ENVIAR ARQUIVO</span>
-                  </button>
+                    {uploadingSquare ? (
+                      <>
+                        <Loader2 size={11} className="animate-spin text-[#00ff66]" />
+                        <span>PROCESSANDO...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={11} />
+                        <span>ENVIAR ARQUIVO</span>
+                      </>
+                    )}
+                  </label>
                 </div>
               </div>
 
@@ -775,7 +828,7 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                 <div className="flex-1 space-y-2">
                   <input
                     id="formSquarePortrait"
-                    type="url"
+                    type="text"
                     value={squarePortrait}
                     onChange={(e) => setSquarePortrait(e.target.value)}
                     placeholder="https://exemplo.com/foto-1x1.jpg (Opcional) ou envie um arquivo"
@@ -787,8 +840,8 @@ export const HeroModal: React.FC<HeroModalProps> = ({
                       onClick={() => squareFileInputRef.current?.click()}
                       className="px-2 py-1 bg-[#05080d] border border-[#00ff66]/60 text-[#00ff66] hover:bg-[#00ff66]/20 rounded text-[11px] flex items-center space-x-1 cursor-pointer"
                     >
-                      <Upload size={12} />
-                      <span>Enviar Arquivo</span>
+                      {uploadingSquare ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                      <span>{uploadingSquare ? 'Processando...' : 'Enviar Arquivo'}</span>
                     </button>
                     <button
                       type="button"
